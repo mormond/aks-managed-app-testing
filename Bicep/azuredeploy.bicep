@@ -49,4 +49,27 @@ resource aksClusterName_resource 'Microsoft.ContainerService/managedClusters@202
   }
 }
 
+resource keyVault_resource 'Microsoft.KeyVault/vaults@2021-10-01' = {
+  location: location
+  name: 'kv-${uniqueString(subscription().subscriptionId, resourceGroup().id)}'
+  properties: {
+    sku: {
+      family: 'A'
+      name: 'standard'
+    }
+    tenantId: tenant().tenantId
+    accessPolicies: [
+      {
+        objectId: aksClusterName_resource.identity.principalId // '61248cef-973e-4471-92fb-fe3653b1d804' // This is the objectId of our managed identity
+        tenantId: subscription().tenantId
+        permissions: {
+          secrets: [
+            'get'
+          ]
+        }
+      }
+    ]
+  }
+}
+
 output controlPlaneFQDN string = aksClusterName_resource.properties.fqdn
