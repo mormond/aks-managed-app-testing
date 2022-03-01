@@ -1,0 +1,205 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "metadata": {
+      "_generator": {
+        "name": "bicep",
+        "version": "0.4.1272.37030",
+        "templateHash": "11494600563997911163"
+      }
+    },
+    "parameters": {
+      "aksClusterName": {
+        "type": "string",
+        "defaultValue": "aks101cluster-vmss",
+        "metadata": {
+          "description": "The name of the Managed Cluster resource."
+        }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]",
+        "metadata": {
+          "description": "The location of AKS resource."
+        }
+      },
+      "dnsPrefix": {
+        "type": "string",
+        "metadata": {
+          "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
+        }
+      },
+      "vaultName": {
+        "type": "string",
+        "defaultValue": "managedapps",
+        "metadata": {
+          "description": "The name of the source key vault."
+        }
+      },
+      "vaultResourceGroupName": {
+        "type": "string",
+        "defaultValue": "ContainerRegistry",
+        "metadata": {
+          "description": "The resource group name of the source key vault."
+        }
+      },
+      "vaultSubscriptionId": {
+        "type": "string",
+        "defaultValue": "",
+        "metadata": {
+          "description": "The subscription id of the source key vault."
+        }
+      }
+    },
+    "resources": [
+      {
+        "type": "Microsoft.ContainerService/managedClusters",
+        "apiVersion": "2020-07-01",
+        "name": "[parameters('aksClusterName')]",
+        "location": "[parameters('location')]",
+        "tags": {
+          "displayname": "AKS Cluster"
+        },
+        "identity": {
+          "type": "SystemAssigned"
+        },
+        "properties": {
+          "enableRBAC": true,
+          "dnsPrefix": "[parameters('dnsPrefix')]",
+          "agentPoolProfiles": [
+            {
+              "name": "agentpool",
+              "osDiskSizeGB": 0,
+              "count": 1,
+              "vmSize": "Standard_B2s",
+              "osType": "Linux",
+              "storageProfile": "ManagedDisks",
+              "type": "VirtualMachineScaleSets",
+              "mode": "System"
+            }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2020-10-01",
+        "name": "dynamicSecret",
+        "properties": {
+          "expressionEvaluationOptions": {
+            "scope": "inner"
+          },
+          "mode": "Incremental",
+          "parameters": {
+            "location": {
+              "value": "[parameters('location')]"
+            },
+            "secret1": {
+              "reference": {
+                "keyVault": {
+                  "id": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('vaultSubscriptionId'), parameters('vaultResourceGroupName')), 'Microsoft.KeyVault/vaults', parameters('vaultName'))]"
+                },
+                "secretName": "secret1"
+              }
+            },
+            "secret2": {
+              "reference": {
+                "keyVault": {
+                  "id": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('vaultSubscriptionId'), parameters('vaultResourceGroupName')), 'Microsoft.KeyVault/vaults', parameters('vaultName'))]"
+                },
+                "secretName": "secret2"
+              }
+            },
+            "principalId": {
+              "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName')), '2020-07-01', 'full').identity.principalId]"
+            }
+          },
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "metadata": {
+              "_generator": {
+                "name": "bicep",
+                "version": "0.4.1272.37030",
+                "templateHash": "8089728992698334769"
+              }
+            },
+            "parameters": {
+              "location": {
+                "type": "string",
+                "defaultValue": "[resourceGroup().location]",
+                "metadata": {
+                  "description": "The location of the key vault resource."
+                }
+              },
+              "secret1": {
+                "type": "secureString"
+              },
+              "secret2": {
+                "type": "secureString"
+              },
+              "principalId": {
+                "type": "string"
+              }
+            },
+            "resources": [
+              {
+                "type": "Microsoft.KeyVault/vaults/secrets",
+                "apiVersion": "2021-10-01",
+                "name": "[format('{0}/{1}', format('kv1-{0}', uniqueString(subscription().subscriptionId, resourceGroup().id)), 'secret1')]",
+                "properties": {
+                  "value": "[parameters('secret1')]"
+                },
+                "dependsOn": [
+                  "[resourceId('Microsoft.KeyVault/vaults', format('kv1-{0}', uniqueString(subscription().subscriptionId, resourceGroup().id)))]"
+                ]
+              },
+              {
+                "type": "Microsoft.KeyVault/vaults/secrets",
+                "apiVersion": "2021-10-01",
+                "name": "[format('{0}/{1}', format('kv1-{0}', uniqueString(subscription().subscriptionId, resourceGroup().id)), 'secret2')]",
+                "properties": {
+                  "value": "[parameters('secret2')]"
+                },
+                "dependsOn": [
+                  "[resourceId('Microsoft.KeyVault/vaults', format('kv1-{0}', uniqueString(subscription().subscriptionId, resourceGroup().id)))]"
+                ]
+              },
+              {
+                "type": "Microsoft.KeyVault/vaults",
+                "apiVersion": "2021-10-01",
+                "name": "[format('kv1-{0}', uniqueString(subscription().subscriptionId, resourceGroup().id))]",
+                "location": "[parameters('location')]",
+                "properties": {
+                  "sku": {
+                    "family": "A",
+                    "name": "standard"
+                  },
+                  "tenantId": "[tenant().tenantId]",
+                  "accessPolicies": [
+                    {
+                      "objectId": "[parameters('principalId')]",
+                      "tenantId": "[subscription().tenantId]",
+                      "permissions": {
+                        "secrets": [
+                          "all"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName'))]"
+        ]
+      }
+    ],
+    "outputs": {
+      "controlPlaneFQDN": {
+        "type": "string",
+        "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName'))).fqdn]"
+      }
+    }
+  }

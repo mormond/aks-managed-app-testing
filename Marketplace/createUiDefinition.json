@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
+    "handler": "Microsoft.Azure.CreateUIDef",
+    "version": "0.1.2-preview",
+    "parameters": {
+        "config": {
+            "isWizard": false,
+            "basics": {}
+        },
+        "basics": [
+            {
+                "name": "aksClusterName",
+                "type": "Microsoft.Common.TextBox",
+                "label": "AKS Cluster Name",
+                "defaultValue": "",
+                "toolTip": "Use only allowed characters",
+                "constraints": {
+                    "required": true,
+                    "regex": "^[a-z0-9_\\-]{3,63}$",
+                    "validationMessage": "Only alphanumeric, underscores, hyphens, and must be 3-63 characters long."
+                },
+                "visible": true
+            },
+            {
+                "name": "dnsPrefix",
+                "type": "Microsoft.Common.TextBox",
+                "label": "DNS Prefix",
+                "defaultValue": "",
+                "toolTip": "Use only allowed characters",
+                "constraints": {
+                    "required": true,
+                    "regex": "^[a-z0-9]{3,8}$",
+                    "validationMessage": "Only alphanumeric, and must be 3-8 characters long."
+                },
+                "visible": true
+            }
+        ],
+        "steps": [],
+        "outputs": {
+            "location": "[location()]",
+            "aksClusterName": "[basics('aksClusterName')]",
+            "dnsPrefix": "[basics('dnsPrefix')]"
+        }
+    }
+}
