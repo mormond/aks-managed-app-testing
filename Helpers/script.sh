@@ -5,5 +5,9 @@ az bicep build --file ./Bicep/azuredeploy.bicep
 
 # Resource group deployment of ARM template
 RG="test-delete"
-az group create --location "westeurope" --group "$RG"
-az deployment group create --group "$RG" --template-file "./Bicep/azuredeploy.json"
+if [[ $(az group exists --resource-group "$RG") == 'true' ]] ; then
+    az group create --location "westeurope" --resource-group "$RG"
+    az deployment group create --resource-group "$RG" --template-file "./Bicep/mainTemplate.json"
+else
+    echo "Resource group exists"
+fi
