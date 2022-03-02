@@ -20,7 +20,7 @@ resource cua_resource 'Microsoft.Resources/deployments@2021-04-01' = {
   name: 'pid-cd14ef8e-a681-4125-94d8-8240ba4ba74e-partnercenter'
   properties: {
     mode: 'Incremental'
-    template: any({ 
+    template: any({
       '$schema': 'https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#'
       'contentVersion': '1.0.0.0'
       'resources': []
@@ -52,6 +52,14 @@ resource aksClusterName_resource 'Microsoft.ContainerService/managedClusters@202
         mode: 'System'
       }
     ]
+    addonProfiles: {
+      azureKeyvaultSecretsProvider: {
+        config: {
+          enableSecretRotation: 'false'
+        }
+        enabled: true
+      }
+    }
   }
 }
 
