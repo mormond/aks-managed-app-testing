@@ -66,6 +66,7 @@ module nested_keyvault_resource './keyvault.bicep' = {
     location: location
     secret1: kv.getSecret('secret1')
     secret2: kv.getSecret('secret2')
+    tenantId: tenant().tenantId
     principalId: aksClusterName_resource.identity.principalId
   }
 }

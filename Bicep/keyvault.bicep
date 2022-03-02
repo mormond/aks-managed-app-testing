@@ -2,12 +2,18 @@
 param location string = resourceGroup().location
 
 @secure()
+@description('A sample kv secret.')
 param secret1 string
 
 @secure()
+@description('A sample kv secret.')
 param secret2 string
 
+@description('The object ID of the SP to be granted access to the kv.')
 param principalId string
+
+@description('The tenant ID of the SP to be granted access to the kv.')
+param tenantId string
 
 resource keyVault_resource 'Microsoft.KeyVault/vaults@2021-10-01' = {
   location: location
@@ -17,14 +23,14 @@ resource keyVault_resource 'Microsoft.KeyVault/vaults@2021-10-01' = {
       family: 'A'
       name: 'standard'
     }
-    tenantId: tenant().tenantId
+    tenantId: tenantId
     accessPolicies: [
       {
-        objectId: principalId // '61248cef-973e-4471-92fb-fe3653b1d804' // This is the objectId of our managed identity
-        tenantId: subscription().tenantId
+        objectId: principalId
+        tenantId: tenantId
         permissions: {
           secrets: [ 
-            'all'
+            'get'
           ]
         }
       }
