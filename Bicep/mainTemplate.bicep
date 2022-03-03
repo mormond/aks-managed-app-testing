@@ -72,11 +72,14 @@ module nested_keyvault_resource './keyvault.bicep' = {
   name: 'dynamicSecret'
   params: {
     location: location
-    secret1: kv.getSecret('secret1')
-    secret2: kv.getSecret('secret2')
+    backgroundColor: kv.getSecret('background-color')
+    infoMessage: kv.getSecret('info-message')
     tenantId: tenant().tenantId
     principalId: aksClusterName_resource.identity.principalId
   }
 }
 
 output controlPlaneFQDN string = aksClusterName_resource.properties.fqdn
+output keyVaultName string = nested_keyvault_resource.name
+output customerTenantId string = tenant().tenantId
+output customerSubscriptionId string = subscription().subscriptionId

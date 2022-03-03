@@ -16,11 +16,32 @@ spec:
         image: jelledruyts/inspectorgadget:latest
         resources:
           limits:
-            memory: "128Mi"
+            memory: "256Mi"
             cpu: "500m"
         ports:
         - containerPort: 80
-
+        volumeMounts:
+        - name: secrets-store01-inline
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+        env:
+        - name: BackgroundColor
+          valueFrom:
+            secretKeyRef:
+              name: background-color
+              key: color
+        - name: InfoMessage
+          valueFrom:
+            secretKeyRef:
+              name: info-message
+              key: message
+      volumes:
+        - name: secrets-store01-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "azure-kvname-msi"
 ---
 
 apiVersion: v1
@@ -34,3 +55,38 @@ spec:
   ports:
   - port: 80
     targetPort: 80
+
+---
+
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: azure-kvname-msi
+  namespace: default
+spec:
+  provider: azure 
+  parameters:
+    usePodIdentity: "false"
+    useVMManagedIdentity: "true"
+    userAssignedIdentityID: "<user_assigned_identity_id>"
+    keyvaultName: "<key_vault_name>"
+    objects: |
+      array:
+        - |
+          objectName: background-color              
+          objectType: secret
+        - |
+          objectName: info-message         
+          objectType: secret
+    tenantId: "<tenant_id>"
+  secretObjects:                                         # [OPTIONAL] SecretObject defines the desired state of synced K8s secret objects
+    - secretName: background-color
+      type: Opaque
+      data: 
+      - objectName: background-color                    # name of the mounted content to sync. this could be the object name or object alias 
+        key: color
+    - secretName: info-message
+      type: Opaque
+      data: 
+      - objectName: info-message                        # name of the mounted content to sync. this could be the object name or object alias 
+        key: message

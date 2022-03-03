@@ -3,11 +3,11 @@ param location string = resourceGroup().location
 
 @secure()
 @description('A sample kv secret.')
-param secret1 string
+param backgroundColor string
 
 @secure()
 @description('A sample kv secret.')
-param secret2 string
+param infoMessage string
 
 @description('The object ID of the SP to be granted access to the kv.')
 param principalId string
@@ -17,7 +17,7 @@ param tenantId string
 
 resource keyVault_resource 'Microsoft.KeyVault/vaults@2021-10-01' = {
   location: location
-  name: 'kv1-${uniqueString(subscription().subscriptionId, resourceGroup().id)}'
+  name: 'kv-${uniqueString(resourceGroup().id)}'
   properties: {
     sku: {
       family: 'A'
@@ -36,16 +36,16 @@ resource keyVault_resource 'Microsoft.KeyVault/vaults@2021-10-01' = {
       }
     ]
   }
-  resource secret1_resource 'secrets' = {
-    name: 'secret1'
+  resource background_color_resource 'secrets@2021-10-01' = {
+    name: 'background-color'
     properties: {
-      value: secret1
+      value: backgroundColor
     }
   }
-  resource secret2_resource 'secrets' = {
-    name: 'secret2'
+  resource info_message_resource 'secrets@2021-10-01' = {
+    name: 'info-message'
     properties: {
-      value: secret2
+      value: infoMessage
     }
   }
 }
