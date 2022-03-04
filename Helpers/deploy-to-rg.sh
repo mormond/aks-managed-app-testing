@@ -6,6 +6,7 @@ az bicep build --file ./Bicep/mainTemplate.bicep
 # Resource group deployment of ARM template
 SUB_ID=""
 RG=""
+DNS_PREFIX=""
 
 if [[ "$RG" == "" ]]; then 
     echo "Please supply a resource group."
@@ -16,8 +17,15 @@ if [[ "$SUB_ID" == "" ]]; then
 fi
 
 if [[ $(az group exists --resource-group "$RG") == 'false' ]]; then
-    az group create --location "westeurope" --resource-group "$RG"
-    az deployment group create --resource-group "$RG" --template-file "./Bicep/mainTemplate.json" --params vaultSubscriptionId="$SUB_ID"
+
+    az group create \
+        --location "westeurope" \
+        --resource-group "$RG"
+
+    az deployment group create \
+        --resource-group "$RG" \
+        --template-file "./Bicep/mainTemplate.json" \
+        --parameters vaultSubscriptionId="$SUB_ID" dnsPrefix="$DNS_PREFIX"
 else
     echo "Resource group exists"
 fi
