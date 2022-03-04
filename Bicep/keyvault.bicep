@@ -9,6 +9,10 @@ param backgroundColor string
 @description('A sample kv secret.')
 param infoMessage string
 
+@secure()
+@description('ACR access token')
+param acrToken string
+
 @description('The object ID of the SP to be granted access to the kv.')
 param principalId string
 
@@ -48,6 +52,12 @@ resource keyVault_resource 'Microsoft.KeyVault/vaults@2021-10-01' = {
       value: infoMessage
     }
   }
+  resource acr_token_resource 'secrets@2021-10-01' = {
+    name: 'acr-token'
+    properties: {
+      value: acrToken
+    }
+  }  
 }
 
 output kvName string = keyVault_resource.name

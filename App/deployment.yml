@@ -11,6 +11,8 @@ spec:
       labels:
         app: myapp
     spec:
+      imagePullSecrets:
+      - name: dockerconfig
       containers:
       - name: myapp
         image: jelledruyts/inspectorgadget:latest
@@ -78,6 +80,9 @@ spec:
         - |
           objectName: info-message         
           objectType: secret
+        - |
+          objectName: acr-token         
+          objectType: secret          
     tenantId: "<tenant_id>"
   secretObjects:                                         # [OPTIONAL] SecretObject defines the desired state of synced K8s secret objects
     - secretName: background-color
@@ -88,5 +93,10 @@ spec:
     - secretName: info-message
       type: Opaque
       data: 
-      - objectName: info-message                        # name of the mounted content to sync. this could be the object name or object alias 
+      - objectName: info-message
         key: message
+    - secretName: dockerconfig
+      type: kubernetes.io/dockerconfigjson
+      data: 
+      - objectName: acr-token
+        key: .dockerconfigjson

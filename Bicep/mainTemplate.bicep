@@ -81,6 +81,7 @@ module nested_keyvault_resource './keyvault.bicep' = {
     location: location
     backgroundColor: kv.getSecret('background-color')
     infoMessage: kv.getSecret('info-message')
+    acrToken: kv.getSecret('acr-token')
     tenantId: tenant().tenantId
     principalId: nested_mi_resource.outputs.aksKvAccessIdentityObjectId
   }
