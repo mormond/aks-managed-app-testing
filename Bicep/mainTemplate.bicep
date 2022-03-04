@@ -82,7 +82,7 @@ module nested_keyvault_resource './keyvault.bicep' = {
     backgroundColor: kv.getSecret('background-color')
     infoMessage: kv.getSecret('info-message')
     tenantId: tenant().tenantId
-    principalId: nested_mi_resource.outputs.aksMiPrincipalId
+    principalId: nested_mi_resource.outputs.aksKvAccessIdentityObjectId
   }
 }
 
