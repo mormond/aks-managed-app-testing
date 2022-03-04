@@ -15,7 +15,7 @@ spec:
       - name: dockerconfig
       containers:
       - name: myapp
-        image: jelledruyts/inspectorgadget:latest
+        image: meomeo.azurecr.io/inspectorgadget:latest
         resources:
           limits:
             memory: "256Mi"
@@ -70,8 +70,8 @@ spec:
   parameters:
     usePodIdentity: "false"
     useVMManagedIdentity: "true"
-    userAssignedIdentityID: "<user_assigned_identity_id>"
-    keyvaultName: "<key_vault_name>"
+    userAssignedIdentityID: ""
+    keyvaultName: ""
     objects: |
       array:
         - |
@@ -82,8 +82,9 @@ spec:
           objectType: secret
         - |
           objectName: acr-token         
-          objectType: secret          
-    tenantId: "<tenant_id>"
+          objectType: secret
+          objectEncoding: "base64"
+    tenantId: ""
   secretObjects:                                         # [OPTIONAL] SecretObject defines the desired state of synced K8s secret objects
     - secretName: background-color
       type: Opaque
