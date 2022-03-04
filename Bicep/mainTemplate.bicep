@@ -63,6 +63,13 @@ resource aksClusterName_resource 'Microsoft.ContainerService/managedClusters@202
   }
 }
 
+module nested_mi_resource './mi.bicep' = {
+  name: 'kvAddonMi'
+  params: {
+    aksMiResourceId: aksClusterName_resource.id
+  }
+}
+
 resource kv 'Microsoft.KeyVault/vaults@2021-10-01' existing = {
   name: vaultName
   scope: resourceGroup(vaultSubscriptionId, vaultResourceGroupName)
@@ -75,9 +82,10 @@ module nested_keyvault_resource './keyvault.bicep' = {
     backgroundColor: kv.getSecret('background-color')
     infoMessage: kv.getSecret('info-message')
     tenantId: tenant().tenantId
-    principalId: aksClusterName_resource.identity.principalId
+    principalId: nested_mi_resource.outputs.aksMiPrincipalId
   }
 }
+
 
 output controlPlaneFQDN string = aksClusterName_resource.properties.fqdn
 output keyVaultName string = nested_keyvault_resource.name
