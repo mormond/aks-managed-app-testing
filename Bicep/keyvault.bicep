@@ -49,3 +49,5 @@ resource keyVault_resource 'Microsoft.KeyVault/vaults@2021-10-01' = {
     }
   }
 }
+
+output kvName string = keyVault_resource.name

@@ -28,7 +28,7 @@ resource cua_resource 'Microsoft.Resources/deployments@2021-04-01' = {
   }
 }
 
-resource aksClusterName_resource 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
+resource aksCluster_resource 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
   location: location
   name: aksClusterName
   tags: {
@@ -66,7 +66,7 @@ resource aksClusterName_resource 'Microsoft.ContainerService/managedClusters@202
 module nested_mi_resource './mi.bicep' = {
   name: 'kvAddonMi'
   params: {
-    aksMiResourceId: aksClusterName_resource.id
+    aksClusterResourceId: aksCluster_resource.id
   }
 }
 
@@ -86,8 +86,9 @@ module nested_keyvault_resource './keyvault.bicep' = {
   }
 }
 
-
-output controlPlaneFQDN string = aksClusterName_resource.properties.fqdn
-output keyVaultName string = nested_keyvault_resource.name
-output customerTenantId string = tenant().tenantId
+output controlPlaneFQDN string = aksCluster_resource.properties.fqdn
 output customerSubscriptionId string = subscription().subscriptionId
+output keyVaultName string = nested_keyvault_resource.outputs.kvName
+output customerTenantId string = tenant().tenantId
+output aksKvAccessIdentityClientId string = nested_mi_resource.outputs.aksKvAccessIdentityClientId
+output aksKvAccessIdentityObjectId string = nested_mi_resource.outputs.aksKvAccessIdentityObjectId
