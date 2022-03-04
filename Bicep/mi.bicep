@@ -1,4 +1,7 @@
-param aksMiResourceId string
+param aksClusterResourceId string
 
-output aksMiResourceId string = aksMiResourceId
-output aksMiPrincipalId string = reference(aksMiResourceId, '2020-07-01','Full').properties.addonProfiles.azureKeyvaultSecretsProvider.identity.objectId
+var aksResource = reference(aksClusterResourceId, '2020-07-01','Full')
+
+output aksClusterResourceId string = aksClusterResourceId
+output aksKvAccessIdentityClientId string = aksResource.properties.addonProfiles.azureKeyvaultSecretsProvider.identity.clientId
+output aksKvAccessIdentityObjectId string = aksResource.properties.addonProfiles.azureKeyvaultSecretsProvider.identity.objectId
