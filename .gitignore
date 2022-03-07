@@ -1,3 +1,3 @@
-Bicep/mainTemplate.json
-Marketplace/package.zip
-Marketplace/mainTemplate.json
+/Bicep/mainTemplate.json
+/Marketplace/
+!/Marketplace/createUiDefinition.json
