@@ -33,8 +33,13 @@ on:
 
 env:
   RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP_NAME }}
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   CLUSTER_NAME: "aks101cluster-vmss"
   DEPLOYMENT_MANIFEST_PATH: "App/deployment.yml"
+  KV_SECRET_PROVIDER_IDENTITY: ${{ secrets.KV_SECRET_PROVIDER_IDENTITY }}
+  KV_NAME: ${{ secrets.KV_NAME }}
+  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
 
 jobs:
   build:
@@ -61,13 +66,17 @@ jobs:
         resource-group: ${{ env.RESOURCE_GROUP }}
         cluster-name: ${{ env.CLUSTER_NAME }}
 
+    - name: Inject values
+      run: |
+        sed |
+        -e 's/userAssignedIdentityID: ""/userAssignedIdentityID: "${KV_SECRET_PROVIDER_IDENTITY}"/' |
+        -e 's/keyvaultName: ""/keyvaultName: "${KV_NAME}"/' |
+        -e 's/tenantId: ""/tenantId: "${TENANT_ID}"/' |
+        ${DEPLOYMENT_MANIFEST_PATH} > injected-manifest.yaml
+
     # Deploys application based on given manifest file
     - name: Deploys application
       uses: Azure/k8s-deploy@v3.0
       with:
         action: deploy
-        manifests: ${{ env.DEPLOYMENT_MANIFEST_PATH }}
-        images: |
-          ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }}
-        imagepullsecrets: |
-          ${{ env.IMAGE_PULL_SECRET_NAME }}
+        manifests: injected-manifest.yaml
