@@ -32,7 +32,7 @@ on:
   workflow_dispatch:
 
 env:
-  RESOURCE_GROUP: "your-resource-group"
+  RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP_NAME }}
   CLUSTER_NAME: "aks101cluster-vmss"
   DEPLOYMENT_MANIFEST_PATH: "/App/deployment.yml"
 
