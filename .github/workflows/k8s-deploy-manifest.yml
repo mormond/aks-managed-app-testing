@@ -34,7 +34,8 @@ on:
 env:
   RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP_NAME }}
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  CLUSTER_NAME: "aks101cluster-vmss"
+#  CLUSTER_NAME: "aks101cluster-vmss"
+  CLUSTER_NAME: "brian"
   DEPLOYMENT_MANIFEST_PATH: "App/deployment.yml"
   KV_SECRET_PROVIDER_IDENTITY: ${{ secrets.KV_SECRET_PROVIDER_IDENTITY }}
   KV_NAME: ${{ secrets.KV_NAME }}
