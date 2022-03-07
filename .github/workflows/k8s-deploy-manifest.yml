@@ -74,9 +74,9 @@ jobs:
         -e "s/tenantId:\s\"\"/tenantId: \"${AZURE_TENANT_ID}\"/" \
         ${DEPLOYMENT_MANIFEST_PATH} > injected-manifest.yaml
 
-    - name: Debug
-      run: |
-        cat injected-manifest.yaml   
+    # - name: Debug
+    #   run: |
+    #     cat injected-manifest.yaml   
 
     - name: Apply manifest
       run: |
