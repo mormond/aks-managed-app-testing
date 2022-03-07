@@ -74,9 +74,13 @@ jobs:
         -e 's/tenantId: ""/tenantId: "${TENANT_ID}"/' \
         ${DEPLOYMENT_MANIFEST_PATH} > injected-manifest.yaml
 
+    - name: Apply manifest
+      run: |
+        kubectl apply -f injected-manifest.yaml
+
     # Deploys application based on given manifest file
-    - name: Deploys application
-      uses: Azure/k8s-deploy@v3.0
-      with:
-        action: deploy
-        manifests: injected-manifest.yaml
+    # - name: Deploys application
+    #   uses: Azure/k8s-deploy@v3.0
+    #   with:
+    #     action: deploy
+    #     manifests: injected-manifest.yaml
