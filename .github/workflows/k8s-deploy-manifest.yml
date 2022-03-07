@@ -69,9 +69,9 @@ jobs:
     - name: Inject values
       run: |
         sed \
-        -e 's/userAssignedIdentityID: ""/userAssignedIdentityID: "${KV_SECRET_PROVIDER_IDENTITY}"/' \
-        -e 's/keyvaultName: ""/keyvaultName: "${KV_NAME}"/' \
-        -e 's/tenantId: ""/tenantId: "${TENANT_ID}"/' \
+        -e "s/userAssignedIdentityID:   \"\"/userAssignedIdentityID: \"${KV_SECRET_PROVIDER_IDENTITY}\"/" \
+        -e "s/keyvaultName: \"\"/keyvaultName: \"${KV_NAME}\"/" \
+        -e "s/tenantId: \"\"/tenantId: \"${TENANT_ID}\"/" \
         ${DEPLOYMENT_MANIFEST_PATH} > injected-manifest.yaml
 
     - name: Apply manifest
