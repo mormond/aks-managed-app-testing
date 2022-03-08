@@ -58,6 +58,10 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         allow-no-subscriptions: true
+
+    - name: Azure set subscription
+      run: |
+        az account set --subscription "${AZURE_SUBSCRIPTION_ID}"
       
     # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
     - name: Get K8s context
