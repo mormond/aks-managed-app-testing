@@ -84,6 +84,7 @@ jobs:
 
     - name: Apply manifest
       run: |
+        az account set --subscription "${AZURE_SUBSCRIPTION_ID}"
         kubectl apply -f injected-manifest.yaml
 
     # Deploys application based on given manifest file
