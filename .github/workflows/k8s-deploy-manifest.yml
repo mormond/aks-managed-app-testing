@@ -85,6 +85,7 @@ jobs:
     - name: Apply manifest
       run: |
         az account set --subscription "${AZURE_SUBSCRIPTION_ID}"
+        az keyvault secret show --name background-color --vault-name "${KV_NAME}"
         kubectl apply -f injected-manifest.yaml
 
     # Deploys application based on given manifest file
