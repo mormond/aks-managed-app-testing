@@ -63,6 +63,8 @@ resource aksCluster_resource 'Microsoft.ContainerService/managedClusters@2020-07
   }
 }
 
+var targetTenantId = aksCluster_resource.identity.tenantId
+
 module nested_mi_resource './mi.bicep' = {
   name: 'kvAddonMi'
   params: {
@@ -82,7 +84,7 @@ module nested_keyvault_resource './keyvault.bicep' = {
     backgroundColor: kv.getSecret('background-color')
     infoMessage: kv.getSecret('info-message')
     acrToken: kv.getSecret('acr-token')
-    tenantId: tenant().tenantId
+    tenantId: targetTenantId
     principalId: nested_mi_resource.outputs.aksKvAccessIdentityObjectId
   }
 }
@@ -90,6 +92,6 @@ module nested_keyvault_resource './keyvault.bicep' = {
 output controlPlaneFQDN string = aksCluster_resource.properties.fqdn
 output customerSubscriptionId string = subscription().subscriptionId
 output keyVaultName string = nested_keyvault_resource.outputs.kvName
-output customerTenantId string = tenant().tenantId
+output customerTenantId string = targetTenantId
 output aksKvAccessIdentityClientId string = nested_mi_resource.outputs.aksKvAccessIdentityClientId
 output aksKvAccessIdentityObjectId string = nested_mi_resource.outputs.aksKvAccessIdentityObjectId
