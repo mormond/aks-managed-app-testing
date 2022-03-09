@@ -16,6 +16,7 @@ param vaultResourceGroupName string = 'ContainerRegistry'
 @description('The subscription id of the source key vault.')
 param vaultSubscriptionId string = ''
 
+// CUA GUID resource required for Marketplace publishing
 resource cua_resource 'Microsoft.Resources/deployments@2021-04-01' = {
   name: 'pid-cd14ef8e-a681-4125-94d8-8240ba4ba74e-partnercenter'
   properties: {
@@ -28,6 +29,9 @@ resource cua_resource 'Microsoft.Resources/deployments@2021-04-01' = {
   }
 }
 
+// Create an AKS Cluster with system-assigned managed identity
+// This will also create two user-assigned managed identities
+// One for the KV secrets provider and one for the agent pools
 resource aksCluster_resource 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
   location: location
   name: aksClusterName
@@ -63,20 +67,24 @@ resource aksCluster_resource 'Microsoft.ContainerService/managedClusters@2020-07
   }
 }
 
+// We need to know the customer tenant to associate with the KV
+// This allows the KV secrets provider managed identity to access (as it is created in the customer tenant)
+// We can get this from the managed identity created by the AKS cluster resource
 var targetTenantId = aksCluster_resource.identity.tenantId
 
-module nested_mi_resource './mi.bicep' = {
-  name: 'kvAddonMi'
-  params: {
-    aksClusterResourceId: aksCluster_resource.id
-  }
-}
+// We also need the managed identity of the KV secrets provider
+// [a] to create an access policy on the Key Vault (needs objectId)
+// [b] to set in the SecretProviderClass in the K8S manifest to pull secrets from Key Vault (needs clientId)
+var azureKeyvaultSecretsProviderManagedIdentity = aksCluster_resource.properties.addonProfiles.azureKeyvaultSecretsProvider.identity
 
+// This gets a reference to the existing KV in the publisher tenant
 resource kv 'Microsoft.KeyVault/vaults@2021-10-01' existing = {
   name: vaultName
   scope: resourceGroup(vaultSubscriptionId, vaultResourceGroupName)
 }
 
+// To get the secrets from the existing KV and set the on the new KV requires a nested template
+// We pass the secrets as secure params on the new KV
 module nested_keyvault_resource './keyvault.bicep' = {
   name: 'dynamicSecret'
   params: {
@@ -85,13 +93,14 @@ module nested_keyvault_resource './keyvault.bicep' = {
     infoMessage: kv.getSecret('info-message')
     acrToken: kv.getSecret('acr-token')
     tenantId: targetTenantId
-    principalId: nested_mi_resource.outputs.aksKvAccessIdentityObjectId
+    principalId: azureKeyvaultSecretsProviderManagedIdentity.objectId
   }
 }
 
+// Output everything we will need for the K8S manifest deployment + FQDN of cluster
 output customerManagedResourceGroupName string = resourceGroup().name
 output customerTenantId string = targetTenantId
 output customerSubscriptionId string = subscription().subscriptionId
 output keyVaultName string = nested_keyvault_resource.outputs.kvName
-output keyVaultSecretProviderManagedIdentity string = nested_mi_resource.outputs.aksKvAccessIdentityClientId
+output keyVaultSecretProviderManagedIdentity string = azureKeyvaultSecretsProviderManagedIdentity.clientId
 output controlPlaneFQDN string = aksCluster_resource.properties.fqdn

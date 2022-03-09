@@ -19,6 +19,8 @@ param principalId string
 @description('The tenant ID of the SP to be granted access to the kv.')
 param tenantId string
 
+// Create KV and 3 secrets to be populated from the publisher KV
+// Create an access policy for the AKS KV secrets provider
 resource keyVault_resource 'Microsoft.KeyVault/vaults@2021-10-01' = {
   location: location
   name: 'kv-${uniqueString(resourceGroup().id)}'
