@@ -89,9 +89,9 @@ module nested_keyvault_resource './keyvault.bicep' = {
   }
 }
 
-output controlPlaneFQDN string = aksCluster_resource.properties.fqdn
+output customerManagedResourceGroupName string = resourceGroup().name
+output customerTenantId string = targetTenantId
 output customerSubscriptionId string = subscription().subscriptionId
 output keyVaultName string = nested_keyvault_resource.outputs.kvName
-output customerTenantId string = targetTenantId
-output aksKvAccessIdentityClientId string = nested_mi_resource.outputs.aksKvAccessIdentityClientId
-output aksKvAccessIdentityObjectId string = nested_mi_resource.outputs.aksKvAccessIdentityObjectId
+output keyVaultSecretProviderManagedIdentity string = nested_mi_resource.outputs.aksKvAccessIdentityClientId
+output controlPlaneFQDN string = aksCluster_resource.properties.fqdn
