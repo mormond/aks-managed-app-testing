@@ -59,6 +59,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         allow-no-subscriptions: true
 
+    # Set the subscription to the right context (the "customer" subscription)
     - name: Azure set subscription
       run: |
         az account set --subscription "${AZURE_SUBSCRIPTION_ID}"
@@ -70,25 +71,22 @@ jobs:
         resource-group: ${{ env.RESOURCE_GROUP }}
         cluster-name: ${{ env.CLUSTER_NAME }}
 
+    # Inject run values into the deployment manifest template
     - name: Inject values
       run: |
         sed \
         -e "s/userAssignedIdentityID:\s\"\"/userAssignedIdentityID: \"${KV_SECRET_PROVIDER_IDENTITY}\"/" \
         -e "s/keyvaultName:\s\"\"/keyvaultName: \"${KV_NAME}\"/" \
         -e "s/tenantId:\s\"\"/tenantId: \"${AZURE_TENANT_ID}\"/" \
-        ${DEPLOYMENT_MANIFEST_PATH} > injected-manifest.yaml
+        ${DEPLOYMENT_MANIFEST_PATH} > injected-manifest.yaml 
 
-    # - name: Debug
-    #   run: |
-    #     cat injected-manifest.yaml   
-
+    # Apply deployment manifest
     - name: Apply manifest
       run: |
         kubectl apply -f injected-manifest.yaml
 
-    # Deploys application based on given manifest file
-    # - name: Deploys application
-    #   uses: Azure/k8s-deploy@v3.0
-    #   with:
-    #     action: deploy
-    #     manifests: injected-manifest.yaml
+    # Extract the external IP for the loadbalancer
+    - name: Get external IP
+      run: |
+        kubectl get services -o jsonpath="{.items[1].status.loadBalancer.ingress[0].ip}"
+
