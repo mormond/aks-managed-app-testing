@@ -49,6 +49,7 @@
 ## Deploy application
 
 1. To deploy the Kubernetes application, **you will need to work in your own copy of this repo**
+1. The application is deployed using GitHub actions in a workflow at `/.github/workflows/k8s-deploy-manifest.yml`
 1. Navigate to your repo on [GitHub](https://www.github.com)
 1. Then go to `Settings` -> `Secrets` -> `Actions`
 1. Create the following (action) secrets:
@@ -59,6 +60,20 @@
     * `KV_NAME` - the KV name (see outputs: `keyVaultName`)
     * `KV_SECRET_PROVIDER_IDENTITY`(see outputs: `keyVaultSecretProviderManagedIdentity`)
     * `RESOURCE_GROUP_NAME` (see outputs: `customerManagedResourceGroupName`)
+1. Before running the workflow, you need to make a minor change to the application manifest
+1. In your copy of the repo, open up `/app/deployment/yml` - this is the Kubernetes manifest
+1. On line 18, update the image reference to point to your container registry repo
 
+    ```yaml
+    image: <acrname>.azurecr.io/inspectorgadget:latest
+    ```
+
+1. Make sure you do not change the indentation - this is important in YAML
+1. Save, commit and push your changes to GitHub
+1. Confirm you can see your changes refected on GitHub
+1. Run the `Build and deploy an app to AKS` workflow via the GitHub UI
+   1. On GitHub, navigate to `Actions`
+   1. Under `Workflows` select `Build and deploy an app to AKS`
+   1. Select `Run workflow` and click the `Run workflow` button that appears
 
 ## Usage
