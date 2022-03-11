@@ -75,5 +75,8 @@
    1. On GitHub, navigate to `Actions`
    1. Under `Workflows` select `Build and deploy an app to AKS`
    1. Select `Run workflow` and click the `Run workflow` button that appears
+1. Click on the workflow run and you can monitor progress
+1. When the run completes, click on step `Get external IP` to get the IP address of the application
+1. Navigate to the IP address and confirm the inspector gadget home page appears with a coloured background (set by `background-color`) and and info message (set by `info-message`)
 
-## Usage
+  ![Image of inspector gadget hompage](images/inspector-gadget.png)
