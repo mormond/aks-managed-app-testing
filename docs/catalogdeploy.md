@@ -1,0 +1,1 @@
+# Catalog managed application deployment
