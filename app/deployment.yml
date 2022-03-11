@@ -15,7 +15,7 @@ spec:
       - name: dockerconfig
       containers:
       - name: myapp
-        image: meomeo.azurecr.io/inspectorgadget:latest
+        image: meomacr.azurecr.io/inspectorgadget:latest
         resources:
           limits:
             memory: "256Mi"
