@@ -88,5 +88,5 @@ jobs:
     # Extract the external IP for the loadbalancer
     - name: Get external IP
       run: |
-        kubectl get services -o jsonpath="{.items[1].status.loadBalancer.ingress[0].ip}"
+        echo $(kubectl get services -o jsonpath="{.items[1].status.loadBalancer.ingress[0].ip}")
 
