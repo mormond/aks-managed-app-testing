@@ -33,4 +33,4 @@ The deployment will also create another `Managed` Resource Group with name `MC_{
 
 For more details about **managed apps**, see [Azure managed applications overview](https://docs.microsoft.com/azure/azure-resource-manager/managed-applications/overview).
 
-Continue to [deployment](./Documentation/deploy.md).
+Continue to [deployment](./docs/deploy.md).
