@@ -1,7 +1,7 @@
 # Useful snippets of script
 
 # Generate ARM templace from Bicep file
-az bicep build --file ./Bicep/mainTemplate.bicep
+az bicep build --file ./bicep/mainTemplate.bicep
 
 # Resource group deployment of ARM template
 SUB_ID=""
@@ -24,8 +24,8 @@ if [[ $(az group exists --resource-group "$RG") == 'false' ]]; then
 
     az deployment group create \
         --resource-group "$RG" \
-        --template-file "./Bicep/mainTemplate.json" \
+        --template-file "./bicep/mainTemplate.json" \
         --parameters vaultSubscriptionId="$SUB_ID" dnsPrefix="$DNS_PREFIX"
 else
-    echo "Resource group exists"
+   echo "Resource group exists"
 fi

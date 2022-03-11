@@ -8,10 +8,10 @@ param location string = resourceGroup().location
 param dnsPrefix string
 
 @description('The name of the source key vault.')
-param vaultName string = 'managedapps'
+param vaultName string = 'kv-managedapps'
 
 @description('The resource group name of the source key vault.')
-param vaultResourceGroupName string = 'ContainerRegistry'
+param vaultResourceGroupName string = 'ManagedAppsSource'
 
 @description('The subscription id of the source key vault.')
 param vaultSubscriptionId string = ''
