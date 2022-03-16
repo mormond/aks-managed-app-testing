@@ -1,5 +1,17 @@
 # Catalog managed application deployment
 
+## Create a package file for the managed app definition
+
+1. Build the ARM templace from the Bicep files
+
+    ```bash
+    az bicep build --file ./bicep/mainTemplate.bicep
+    ```
+
+1. Copy the generated `mainTemplate.json` file to the `marketplace` folder
+1. cd into the `marketplace` folder
+1. Zip both `mainTemplate.json` and `createUiDefinition.json` into a file named `package.zip`
+
 ## Login
 
 1. You must deploy the template to a subscription backed by the `publisher tenant`
@@ -7,7 +19,8 @@
 
 ## Upload package to blob storage
 
-1. In order to create a managed app definition, you need to stage the package file containing our ARM template etc at a URL
+1. In order to create a managed app definition, you need to stage the `package.zip`  file at a URL
+1. We can stage using blob storage
 1. You may either
    1. create a storage account and blob container using the portal or
    1. use the script snippets in `helpers/deploy-app-definition.sh` to do so
