@@ -1,4 +1,21 @@
-# Catalog managed application deployment
+# Service catalog managed application deployment
+
+## Overview
+
+A service catalog managed application is very similar to a marketplace application but it intended to be deployed with an internal organisation application catalog. They share many characteristics and service catalog apps can be a convenient way to test a managed application before publishing to marketplace.
+
+For more details on service catalog managed application see:
+
+* [Azure managed applications overview](https://docs.microsoft.com/azure/azure-resource-manager/managed-applications/overview)
+* [Quickstart: Create and publish a managed application definition](https://docs.microsoft.com/azure/azure-resource-manager/managed-applications/publish-service-catalog-app?tabs=azure-cli)
+
+## High level steps for publishing a service catalog managed application
+
+1. Create a template that defines the resources to deploy with the managed application (`bicep/`)
+1. Define the user interface elements for the portal when deploying the managed application (`marketplace/createUiDefinition.json`)
+1. Create a .zip package that contains the required template files
+1. Decide which identities need access to the managed resource group
+1. Create the managed application definition from the .zip package and requests access for the identity
 
 ## Create a package file for the managed app definition
 
@@ -12,31 +29,35 @@
 1. cd into the `marketplace` folder
 1. Zip both `mainTemplate.json` and `createUiDefinition.json` into a file named `package.zip`
 
-## Login
-
-1. You must deploy the template to a subscription backed by the `publisher tenant`
-1. Login to the target subscription
-
 ## Upload package to blob storage
 
-1. In order to create a managed app definition, you need to stage the `package.zip`  file at a URL. We will use blob storage for this.
+1. In order to create a managed app definition, you need to stage the `package.zip`  file at a URL. Blob storage can be used for this.
 1. You may either
    1. Use the Azure Portal to
       1. Create a storage account
       1. Create a blob container in the storage account
       1. Upload `marketplace/package.zip` to the container
-      1. Add yourself the contributor role on the container
+      1. Generate a SAS URI to provide read access to the blob
    1. Use the script snippets in `helpers/deploy-app-definition.sh` to achieve the same
 
 ## Create a managed app definition from the package
 
-1. Use the script snippets in `helpers/deploy-app-definition.sh` to
-   1. Get the blob URL
-   1. Create the managed app definition
+1. Use the script snippets in `helpers/deploy-app-definition.sh`
 
-...
-...
-...
+   ```bash
+   az managedapp definition create \
+   --name "${NAME}" \
+   --location "${LOCATION}" \
+   --resource-group "${RG}" \
+   --lock-level ReadOnly \
+   --display-name "${DISPLAY_NAME}" \
+   --description "${DESCRIPTION}" \
+   --authorizations "${USER_ID}:${OWNER_ROLE_ID}" \
+   --package-file-uri "${BLOB_URL}"
+   ```
+
+1. If you used the portal to upload package.zip, you will need to populate the above environment variables to match the values you used
+1. There are snippets in the file to create `USER_ID`, `OWNER_ROLE_ID`
 
 ## Deploy application
 
