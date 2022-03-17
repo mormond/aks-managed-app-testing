@@ -8,24 +8,24 @@ SUB_ID=""
 RG=""
 DNS_PREFIX=""
 
-if [[ "$RG" == "" ]]; then 
+if [[ "${RG}" == "" ]]; then 
     echo "Please supply a resource group."
 fi
 
-if [[ "$SUB_ID" == "" ]]; then 
+if [[ "${SUB_ID}" == "" ]]; then 
     echo "Please supply a subscription ID."
 fi
 
-if [[ $(az group exists --resource-group "$RG") == 'false' ]]; then
+if [[ $(az group exists --resource-group "${RG}") == 'false' ]]; then
 
     az group create \
         --location "westeurope" \
-        --resource-group "$RG"
+        --resource-group "${RG}"
 
     az deployment group create \
-        --resource-group "$RG" \
+        --resource-group "${RG}" \
         --template-file "./bicep/mainTemplate.json" \
-        --parameters vaultSubscriptionId="$SUB_ID" dnsPrefix="$DNS_PREFIX"
+        --parameters vaultSubscriptionId="${SUB_ID}" dnsPrefix="${DNS_PREFIX}"
 else
    echo "Resource group exists"
 fi

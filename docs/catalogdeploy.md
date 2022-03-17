@@ -19,11 +19,14 @@
 
 ## Upload package to blob storage
 
-1. In order to create a managed app definition, you need to stage the `package.zip`  file at a URL
-1. We can stage using blob storage
+1. In order to create a managed app definition, you need to stage the `package.zip`  file at a URL. We will use blob storage for this.
 1. You may either
-   1. create a storage account and blob container using the portal or
-   1. use the script snippets in `helpers/deploy-app-definition.sh` to do so
+   1. Use the Azure Portal to
+      1. Create a storage account
+      1. Create a blob container in the storage account
+      1. Upload `marketplace/package.zip` to the container
+      1. Add yourself the contributor role on the container
+   1. Use the script snippets in `helpers/deploy-app-definition.sh` to achieve the same
 
 ## Create a managed app definition from the package
 
