@@ -1,4 +1,4 @@
-# Service catalog managed application deployment
+# Service Catalog Managed Application Deployment
 
 ## Overview
 
@@ -31,7 +31,9 @@ For more details on service catalog managed application see:
 
 ## Upload package to blob storage
 
-1. In order to create a managed app definition, you need to stage the `package.zip`  file at a URL. Blob storage can be used for this.
+In order to create a managed app definition, you need to stage the `package.zip`  file at a URL.
+
+1. Blob storage can be used to stage the `package.zip` file
 1. You may either
    1. Use the Azure Portal to
       1. Create a storage account
@@ -39,9 +41,11 @@ For more details on service catalog managed application see:
       1. Upload `marketplace/package.zip` to the container
       1. Generate a SAS URI to provide read access to the blob
    1. Use the script snippets in `helpers/deploy-app-definition.sh` to achieve the same
+1. You just need to get `package.zip` available at an accessible URL
 
 ## Create a managed app definition from the package
 
+1. Once you have staged `package.zip` you can create an app definition
 1. Use the script snippets in `helpers/deploy-app-definition.sh`
 
    ```bash
@@ -59,37 +63,21 @@ For more details on service catalog managed application see:
 1. If you used the portal to upload package.zip, you will need to populate the above environment variables to match the values you used
 1. There are snippets in the file to create `USER_ID`, `OWNER_ROLE_ID`
 
+## Create an instance of your managed application
+
+1. Now you have a managed application definition you can deploy an instance of your managed app
+1. This is analogous to
+   1. Creating your app definition =>
+      * Publishing your application on marketplace
+   1. Creating a new instance of your service catalog managed application
+      * Customer acquires your application from marketplace
+1. In the Azure Portal, navigate to your managed app definition
+
+   ![Azure Portal Managed App Definition](./images/managed-app-definition.png)
+
+1. Click on `Deploy from definition` and complete the service creation wizard to deploy to your chosen resource group, region etc
+1. Capture the deployment outputs for use in the next step
+
 ## Deploy application
 
-1. To deploy the Kubernetes application, **you will need to work in your own copy of this repo**
-1. The application is deployed using GitHub actions in a workflow at `/.github/workflows/k8s-deploy-manifest.yml`
-1. Navigate to your repo on [GitHub](https://www.github.com)
-1. Then go to `Settings` -> `Secrets` -> `Actions`
-1. Create the following (action) secrets:
-    * `AZURE_CREDENTIALS` (see [this link](https://github.com/marketplace/actions/azure-login#configure-a-service-principal-with-a-secret))
-    * `AZURE_SUBSCRIPTION_ID` - the `customer` subscription ID (see outputs: `customerSubscriptionId`)
-    * `AZURE_TENANT_ID` - the `customer` tenant ID (see outputs: `customerTenantId`)
-    * `CLUSTER_NAME` - the AKS cluster name (set to `aks101cluster-vmss`)
-    * `KV_NAME` - the KV name (see outputs: `keyVaultName`)
-    * `KV_SECRET_PROVIDER_IDENTITY`(see outputs: `keyVaultSecretProviderManagedIdentity`)
-    * `RESOURCE_GROUP_NAME` (see outputs: `customerManagedResourceGroupName`)
-1. Before running the workflow, you need to make a minor change to the application manifest
-1. In your copy of the repo, open up `/app/deployment/yml` - this is the Kubernetes manifest
-1. On line 18, update the image reference to point to your container registry repo
-
-    ```yaml
-    image: <acrname>.azurecr.io/inspectorgadget:latest
-    ```
-
-1. Make sure you do not change the indentation - this is important in YAML
-1. Save, commit and push your changes to GitHub
-1. Confirm you can see your changes refected on GitHub
-1. Run the `Build and deploy an app to AKS` workflow via the GitHub UI
-   1. On GitHub, navigate to `Actions`
-   1. Under `Workflows` select `Build and deploy an app to AKS`
-   1. Select `Run workflow` and click the `Run workflow` button that appears
-1. Click on the workflow run and you can monitor progress
-1. When the run completes, click on step `Get external IP` to get the IP address of the application
-1. Navigate to the IP address and confirm the inspector gadget home page appears with a coloured background (set by `background-color`) and and info message (set by `info-message`)
-
-  ![Image of inspector gadget hompage](images/inspector-gadget.png)
+[Continure to Application Deployment](./deploy-app.md)

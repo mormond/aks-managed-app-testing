@@ -31,7 +31,7 @@ Before any deployment the following resources must exist in the `publisher tenan
 
 ## Configuration
 
-### ACR Resource
+### ACR resource
 
 1. Pull the latest [Inspector Gadget image](https://hub.docker.com/r/jelledruyts/inspectorgadget)
 
