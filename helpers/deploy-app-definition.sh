@@ -16,6 +16,9 @@ DESCRIPTION='Managed App that deploys AKS cluster and KV'
 # The name of the package in blob storage
 PACKAGE_NAME='package.zip'
 
+# Set this to the name of the SP you will use to authenticate
+SP_NAME='aks-managed-app-test'
+
 ## ## ## ## ## ## ## ## ## ## ## ##
 ## Upload package to blob storage
 ## ## ## ## ## ## ## ## ## ## ## ##
@@ -42,8 +45,9 @@ az storage blob upload \
 ## Assign RBAC roles for storage account
 ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 
-# Get current user ObjectId and Owner role definition ID
+# Get current user objectId , SP objectId and Owner role definition ID
 USER_ID=$(az ad signed-in-user show --query objectId --output tsv)
+SP_ID=$(az ad sp list --display-name "${SP_NAME}" --query [].objectId --output tsv)
 OWNER_ROLE_ID=$(az role definition list --name "Owner" --query [].name --output tsv)
 STORAGE_ROLE_ID=$(az role definition list --name "Storage Blob Data Contributor" --query [].name --output tsv)
 
@@ -103,5 +107,5 @@ az managedapp definition create \
   --lock-level ReadOnly \
   --display-name "${DISPLAY_NAME}" \
   --description "${DESCRIPTION}" \
-  --authorizations "${USER_ID}:${OWNER_ROLE_ID}" \
+  --authorizations "${USER_ID}:${OWNER_ROLE_ID}" "${SP_ID}:${OWNER_ROLE_ID}" \
   --package-file-uri "${BLOB_URL}"
