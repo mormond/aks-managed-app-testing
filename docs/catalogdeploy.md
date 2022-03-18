@@ -19,14 +19,32 @@ For more details on service catalog managed application see:
 
 ## Create a package file for the managed app definition
 
-1. Build the ARM templace from the Bicep files
+1. Build the ARM template from the Bicep files
 
     ```bash
     az bicep build --file ./bicep/mainTemplate.bicep
     ```
 
-1. Copy the generated `mainTemplate.json` file to the `marketplace` folder
+1. Copy `mainTemplate.json` file to the `marketplace` folder
 1. cd into the `marketplace` folder
+1. You must make a manual edit to the `mainTemplate.json` file at this stage
+   1. Open `mainTemplate.json` in an editor such as VS Code
+   1. Find the `vaultSubscriptionId` parameter (around line 46)
+   1. Set the default value to your Azure `Subscription ID`
+      * For a service catalog deployment, the app definition and deployed instance will be in the same subscription
+   1. You should end up with something like
+
+      ```json
+      "vaultSubscriptionId": {
+         "type": "string",
+         "defaultValue": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+         "metadata": {
+         "description": "The subscription id of the source key vault."
+      }
+      ```
+
+   1. Save the changes to `mainTemplate.json`
+
 1. Zip both `mainTemplate.json` and `createUiDefinition.json` into a file named `package.zip`
 
 ## Upload package to blob storage
@@ -76,7 +94,17 @@ In order to create a managed app definition, you need to stage the `package.zip`
    ![Azure Portal Managed App Definition](./images/managed-app-definition.png)
 
 1. Click on `Deploy from definition` and complete the service creation wizard to deploy to your chosen resource group, region etc
-1. Capture the deployment outputs for use in the next step
+
+## Capture deployment outputs for use in the next step
+
+1. When the deployment completes, in the Azure Portal, navigate to the resource group where the application was deployed
+1. Navigate to the Managed Application resource
+1. Navigate to the `Parameters and Outputs` blade on the left hand menu (under `Settings`)
+1. Your outputs should look something like this
+
+   ![Azure Portal showing managed application deployment outputs](./images/managed-app-outputs.png)
+
+1. Either leave the tab open or capture the outputs somewhere for the next stage
 
 ## Deploy application
 
