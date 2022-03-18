@@ -85,6 +85,11 @@ jobs:
       run: |
         kubectl apply -f injected-manifest.yaml
 
+    # Brief pause
+    - name: Pause
+      run: |
+        sleep 15s
+
     # Extract the external IP for the loadbalancer
     - name: Get external IP
       run: |
