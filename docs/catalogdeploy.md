@@ -64,6 +64,12 @@ In order to create a managed app definition, you need to stage the `package.zip`
 ## Create a managed app definition from the package
 
 1. Once you have staged `package.zip` you can create an app definition
+1. You need to declare the authorizations in advance
+   * These are the security principals that have rights over the deployed applications
+1. Create a new SP that can be used to manage the deployed applications
+   * Name the SP `aks-managed-app-test` (or update `SP_NAME` in `helpers/deploy-app-definition.sh`)
+   * See [this link to create the SP](https://github.com/marketplace/actions/azure-login#configure-a-service-principal-with-a-secret))
+   * This SP will also be needed in the `Deploy application` stage so store the output somewhere
 1. Use the script snippets in `helpers/deploy-app-definition.sh`
 
    ```bash
@@ -74,7 +80,7 @@ In order to create a managed app definition, you need to stage the `package.zip`
    --lock-level ReadOnly \
    --display-name "${DISPLAY_NAME}" \
    --description "${DESCRIPTION}" \
-   --authorizations "${USER_ID}:${OWNER_ROLE_ID}" \
+   --authorizations "${USER_ID}:${OWNER_ROLE_ID}" "${SP_ID}:${OWNER_ROLE_ID}" \
    --package-file-uri "${BLOB_URL}"
    ```
 
@@ -108,4 +114,4 @@ In order to create a managed app definition, you need to stage the `package.zip`
 
 ## Deploy application
 
-[Continure to Application Deployment](./deploy-app.md)
+[Continue to Application Deployment](./deploy-app.md)

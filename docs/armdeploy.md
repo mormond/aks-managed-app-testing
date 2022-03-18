@@ -48,4 +48,4 @@
 
 ## Deploy application
 
-[Continure to Application Deployment](./deploy-app.md)
+[Continue to Application Deployment](./deploy-app.md)
