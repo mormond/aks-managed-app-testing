@@ -26,7 +26,7 @@ For more details on service catalog managed application see:
     ```
 
 1. Copy `mainTemplate.json` file to the `marketplace` folder
-1. cd into the `marketplace` folder
+1. Change directory into the `marketplace` folder
 1. You must make a manual edit to the `mainTemplate.json` file at this stage
    1. Open `mainTemplate.json` in an editor such as VS Code
    1. Find the `vaultSubscriptionId` parameter (around line 46)

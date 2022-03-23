@@ -8,6 +8,11 @@ The diagram shows the resources involved in a marketplace deployment of this sol
 
 ![Diagram of marketplace managed application deployment](images/marketplace-deployment.png)
 
+To simulate and fully test a marketplace deployment, you should have access to two subscriptions backed by different AAD tenants
+
+* One subscription represents the "publisher" subscription
+* One subscription represents the "customer" subscription
+
 For more details on marketplace managed application see:
 
 * [Azure managed applications overview](https://docs.microsoft.com/azure/azure-resource-manager/managed-applications/overview)
@@ -33,7 +38,24 @@ This is very similar to the steps for publishing a catalog managed application.
     ```
 
 1. Copy `mainTemplate.json` file to the `marketplace` folder
-1. cd into the `marketplace` folder
+1. Change directory into the `marketplace` folder
+1. You must make a manual edit to the `mainTemplate.json` file at this stage
+   1. Open `mainTemplate.json` in an editor such as VS Code
+   1. Find the `vaultSubscriptionId` parameter (around line 46)
+   1. Set the default value to your **publisher** Azure `Subscription ID`
+      * This refers to the publisher key vault resource you created in a previous step
+   1. You should end up with something like
+
+      ```json
+      "vaultSubscriptionId": {
+         "type": "string",
+         "defaultValue": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+         "metadata": {
+         "description": "The subscription id of the source key vault."
+      }
+      ```
+
+   1. Save the changes to `mainTemplate.json`
 1. Zip both `mainTemplate.json` and `createUiDefinition.json` into a file named `package.zip`
 
 ## Publish your managed application in Partner Center
