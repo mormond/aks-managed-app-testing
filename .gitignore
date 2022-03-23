@@ -1,3 +1,6 @@
 /bicep/mainTemplate.json
+
 /marketplace/mainTemplate.json
 /marketplace/*.zip
+
+/helpers/my-deploy-to-rg.sh

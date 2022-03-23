@@ -91,9 +91,11 @@ In order to create a managed app definition, you need to stage the `package.zip`
 
 1. Now you have a managed application definition you can deploy an instance of your managed app
 1. This is analogous to
+   1. Catalog =>
+      * Marketplace
    1. Creating your app definition =>
       * Publishing your application on marketplace
-   1. Creating a new instance of your service catalog managed application
+   1. Creating a new instance of your service catalog managed application =>
       * Customer acquires your application from marketplace
 1. In the Azure Portal, navigate to your managed app definition
 

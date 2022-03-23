@@ -2,8 +2,8 @@
 #
 # This workflow assumes you have already created the target AKS cluster and have created an Azure Container Registry (ACR)
 # For instructions see:
-#   - https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough-portal
-#   - https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal
+#   - https://docs.microsoft.com/azure/aks/kubernetes-walkthrough-portal
+#   - https://docs.microsoft.com/azure/container-registry/container-registry-get-started-portal
 #   - https://github.com/Azure/aks-create-action
 #
 # To configure this workflow:
