@@ -1,0 +1,97 @@
+# This workflow will build and push an application to a Azure Kubernetes Service (AKS) cluster when you push your code
+#
+# This workflow assumes you have already created the target AKS cluster and have created an Azure Container Registry (ACR)
+# For instructions see:
+#   - https://docs.microsoft.com/azure/aks/kubernetes-walkthrough-portal
+#   - https://docs.microsoft.com/azure/container-registry/container-registry-get-started-portal
+#   - https://github.com/Azure/aks-create-action
+#
+# For more information on GitHub Actions for Azure, refer to https://github.com/Azure/Actions
+# For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
+# For more options with the actions used below please refer to https://github.com/Azure/login
+
+name: Build and deploy an app to AKS
+
+on:
+  workflow_dispatch:
+    inputs:
+      resourceGroup:
+        description: 'The resource group in the customer subscription where the AKS cluster is deployed'
+        required: true
+        type: string
+      subscriptionId:
+        description: 'The subscription where the AKS cluster is deployed'
+        required: true
+        type: string
+      clusterName:
+        description: 'The name of the AKS cluster'
+        required: true
+        type: string
+      kvSecretProviderIdentity: 
+        description: 'The user assigned identity for the kvSecretProvider'
+        required: true
+        type: string
+      kvName: 
+        description: 'The kv name (customer subscription)'
+        required: true
+        type: string
+      tenantId: 
+        description: 'The customer tenant'
+        required: true
+        type: string
+
+jobs:
+  build:
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+
+    runs-on: ubuntu-latest
+    steps:
+    # Checks out the repository this file is in
+    - uses: actions/checkout@master
+    
+    # Logs in with your Azure credentials
+    - name: Azure login
+      uses: azure/login@v1.4.3
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        allow-no-subscriptions: true
+
+    # Set the subscription to the right context (the "customer" subscription)
+    - name: Azure set subscription
+      run: |
+        az account set --subscription "${INPUT_SUBSCRIPTIONID}"
+      
+    # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
+    - name: Get K8s context
+      uses: azure/aks-set-context@v2.0
+      with:
+        resource-group: ${{ github.events.inputs.resourceGroup }}
+        cluster-name: ${{ github.events.inputs.clusterName }}
+
+    # Inject run values into the deployment manifest template
+    - name: Inject values
+      run: |
+        sed \
+        -e "s/userAssignedIdentityID:\s\"\"/userAssignedIdentityID: \"${INPUT_KVSECRETPROVIDERIDENTITY}\"/" \
+        -e "s/keyvaultName:\s\"\"/keyvaultName: \"${INPUT_KVNAME}\"/" \
+        -e "s/tenantId:\s\"\"/tenantId: \"${INPUT_TENANTID}\"/" \
+        ${DEPLOYMENT_MANIFEST_PATH} > injected-manifest.yaml 
+
+    # Apply deployment manifest
+    - name: Apply manifest
+      run: |
+        kubectl apply -f injected-manifest.yaml
+
+    # Brief pause
+    - name: Pause
+      run: |
+        sleep 15s
+
+    # Extract the external IP for the loadbalancer
+    - name: Get external IP
+      run: |
+        echo $(kubectl get services -o jsonpath="{.items[1].status.loadBalancer.ingress[0].ip}")
+
