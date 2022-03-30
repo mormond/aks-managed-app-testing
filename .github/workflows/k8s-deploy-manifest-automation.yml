@@ -70,16 +70,16 @@ jobs:
     - name: Get K8s context
       uses: azure/aks-set-context@v2.0
       with:
-        resource-group: ${{ inputs.resourceGroup }}
-        cluster-name: ${{ inputs.clusterName }}
+        resource-group: ${{ github.event.inputs.resourceGroup }}
+        cluster-name: ${{ github.event.inputs.clusterName }}
 
     # Inject run values into the deployment manifest template
     - name: Inject values
       run: |
         sed \
-        -e "s/userAssignedIdentityID:\s\"\"/userAssignedIdentityID: \"${{ inputs.kvSecretProviderIdentity }}\"/" \
-        -e "s/keyvaultName:\s\"\"/keyvaultName: \"${{ inputs.kvName }}\"/" \
-        -e "s/tenantId:\s\"\"/tenantId: \"${{ inputs.tenantId }}\"/" \
+        -e "s/userAssignedIdentityID:\s\"\"/userAssignedIdentityID: \"${{ github.event.inputs.kvSecretProviderIdentity }}\"/" \
+        -e "s/keyvaultName:\s\"\"/keyvaultName: \"${{ github.event.inputs.kvName }}\"/" \
+        -e "s/tenantId:\s\"\"/tenantId: \"${{ github.event.inputs.tenantId }}\"/" \
         ${DEPLOYMENT_MANIFEST_PATH} > injected-manifest.yaml 
 
     # Apply deployment manifest
