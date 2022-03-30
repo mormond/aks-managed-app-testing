@@ -55,9 +55,7 @@ jobs:
     steps:
     # Checks out the repository this file is in
     - uses: actions/checkout@master
-
-    - uses: hmarr/debug-action@v2
-    
+   
     # Logs in with your Azure credentials
     - name: Azure login
       uses: azure/login@v1.4.3
@@ -86,11 +84,6 @@ jobs:
         -e "s/tenantId:\s\"\"/tenantId: \"${{ github.event.inputs.tenantId }}\"/" \
         ${DEPLOYMENT_MANIFEST_PATH} > injected-manifest.yaml 
 
-    # Debug
-    - name: Show manifest
-      run: |
-        cat injected-manifest.yaml
-
     # Apply deployment manifest
     - name: Apply manifest
       run: |
@@ -105,4 +98,3 @@ jobs:
     - name: Get external IP
       run: |
         echo $(kubectl get services -o jsonpath="{.items[1].status.loadBalancer.ingress[0].ip}")
-
