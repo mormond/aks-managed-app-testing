@@ -10,7 +10,7 @@
 # For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
 # For more options with the actions used below please refer to https://github.com/Azure/login
 
-name: Build and deploy an app to AKS
+name: Build and deploy an app to AKS - API
 
 on:
   workflow_dispatch:
@@ -51,6 +51,8 @@ jobs:
     steps:
     # Checks out the repository this file is in
     - uses: actions/checkout@master
+
+    - uses: hmarr/debug-action@v2
     
     # Logs in with your Azure credentials
     - name: Azure login
