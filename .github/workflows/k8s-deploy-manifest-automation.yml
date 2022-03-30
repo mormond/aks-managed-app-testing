@@ -64,22 +64,22 @@ jobs:
     # Set the subscription to the right context (the "customer" subscription)
     - name: Azure set subscription
       run: |
-        az account set --subscription "${INPUT_SUBSCRIPTIONID}"
+        az account set --subscription "${{ inputs.subscriptionId }}"
       
     # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
     - name: Get K8s context
       uses: azure/aks-set-context@v2.0
       with:
-        resource-group: ${{ github.events.inputs.resourceGroup }}
-        cluster-name: ${{ github.events.inputs.clusterName }}
+        resource-group: ${{ inputs.resourceGroup }}
+        cluster-name: ${{ inputs.clusterName }}
 
     # Inject run values into the deployment manifest template
     - name: Inject values
       run: |
         sed \
-        -e "s/userAssignedIdentityID:\s\"\"/userAssignedIdentityID: \"${INPUT_KVSECRETPROVIDERIDENTITY}\"/" \
-        -e "s/keyvaultName:\s\"\"/keyvaultName: \"${INPUT_KVNAME}\"/" \
-        -e "s/tenantId:\s\"\"/tenantId: \"${INPUT_TENANTID}\"/" \
+        -e "s/userAssignedIdentityID:\s\"\"/userAssignedIdentityID: \"${{ inputs.kvSecretProviderIdentity }}\"/" \
+        -e "s/keyvaultName:\s\"\"/keyvaultName: \"${{ inputs.kvName }}\"/" \
+        -e "s/tenantId:\s\"\"/tenantId: \"${{ inputs.tenantId }}\"/" \
         ${DEPLOYMENT_MANIFEST_PATH} > injected-manifest.yaml 
 
     # Apply deployment manifest
