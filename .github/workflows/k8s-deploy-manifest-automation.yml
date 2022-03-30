@@ -66,7 +66,7 @@ jobs:
       run: |
         az account set --subscription "${SUBSCRIPTION_ID}"
       env: 
-        SUBSCRIPTION_ID: ${{ inputs.subscriptionId }}
+        SUBSCRIPTION_ID: ${{ github.event.inputs.subscriptionId }}
       
     # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
     - name: Get K8s context
