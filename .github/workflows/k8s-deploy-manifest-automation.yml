@@ -64,7 +64,9 @@ jobs:
     # Set the subscription to the right context (the "customer" subscription)
     - name: Azure set subscription
       run: |
-        az account set --subscription "${{ inputs.subscriptionId }}"
+        az account set --subscription "${SUBSCRIPTION_ID}"
+      env: 
+        SUBSCRIPTION_ID: ${{ inputs.subscriptionId }}
       
     # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
     - name: Get K8s context
