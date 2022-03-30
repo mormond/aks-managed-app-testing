@@ -14,6 +14,7 @@ name: Build and deploy an app to AKS - API
 
 on:
   workflow_dispatch:
+
     inputs:
       resourceGroup:
         description: 'The resource group in the customer subscription where the AKS cluster is deployed'
@@ -40,8 +41,8 @@ on:
         required: true
         type: string
 
-    env:
-      DEPLOYMENT_MANIFEST_PATH: "app/deployment.yml"
+env:
+  DEPLOYMENT_MANIFEST_PATH: "app/deployment.yml"
 
 jobs:
   build:
