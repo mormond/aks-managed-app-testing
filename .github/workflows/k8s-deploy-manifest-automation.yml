@@ -40,6 +40,9 @@ on:
         required: true
         type: string
 
+    env:
+      DEPLOYMENT_MANIFEST_PATH: "app/deployment.yml"
+
 jobs:
   build:
     permissions:
