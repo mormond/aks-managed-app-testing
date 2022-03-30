@@ -85,6 +85,11 @@ jobs:
         -e "s/tenantId:\s\"\"/tenantId: \"${{ github.event.inputs.tenantId }}\"/" \
         ${DEPLOYMENT_MANIFEST_PATH} > injected-manifest.yaml 
 
+    # Debug
+    - name: Show manifest
+      run: |
+        cat injected-manifest.yaml
+
     # Apply deployment manifest
     - name: Apply manifest
       run: |
