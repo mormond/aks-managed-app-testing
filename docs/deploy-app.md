@@ -42,3 +42,13 @@ The application is described in a simple manifest file at `app/deployment/yml` w
 1. Navigate to the IP address and confirm the inspector gadget home page appears with a coloured background (set by `background-color`) and and info message (set by `info-message`)
 
   ![Image of inspector gadget hompage](images/inspector-gadget.png)
+
+## Automating Application Deployment
+
+It is possible to completely automate this process such that each successful deployment of the managed application will invoke a deployment of the K8S to the deployed managed app instance.
+
+Managed applications have a [notification feature](https://docs.microsoft.com/azure/azure-resource-manager/managed-applications/publish-notifications) we can use to listen for events.
+
+This allows us to listen for the successful deployment notification and invoke the GitHub action to deploy the K8S app.
+
+For more impementation details see this repo [Marketplace Notifications Webhook](https://github.com/mormond/marketplace-notifications-webhook).
