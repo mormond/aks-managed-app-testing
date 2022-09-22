@@ -4,3 +4,6 @@
 /marketplace/*.zip
 
 /helpers/my-deploy-to-rg.sh
+
+.github/workflows/payload.json
+.github/workflows/test.http

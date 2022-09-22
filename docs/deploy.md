@@ -19,10 +19,24 @@ Before any deployment the following resources must exist in the `publisher tenan
 * A Key vault (KV) resource
 * An Container registry (ACR) resource
 
-1. Create a new resource group called `ManagedAppsSource` to host these resources
-   * If you pick a different name, make sure you update it in the Bicep template (see below)
-1. Create a new `Key vault resource` in the resource group (Standard SKU is fine)
-1. Create a new `Container registry resource` in the resource group (Basic SKU is fine)
+1. Create a new resource group called `managed-app-aks-publisher-source` to host these resources
+   * If you pick a different name, make sure you update it in the command below and the main Bicep template
+1. The following Azure CLI command will create the resources
+    ```bash
+    az deployment group create \
+    --name 'prereqs' \
+    --resource-group 'managed-app-aks-publisher-source' \
+    --template-file './bicep/prereqs.bicep' \
+    --parameters \
+    kvname='[INSERT UNIQUE NAME FOR THE KEY VAULT]' \
+    objectId='[INSERT THE OBJECT ID OF YOUR USER IDENTITY]'
+    ```
+1. You can use `az ad signed-in-user show --query id` to get your objectId
+1. You will be prompted for the `securestring` values:
+    1. `backgroundColor` - set this to a valid HTML color name eg `'MediumSeaGreen'`
+    1. `infoMessage` - set this to any string eg `'Hello!'`
+    1. `acrToken` - set this to any empty string for now
+
 1. Update the Bicep template `bicep/mainTemplate.bicep` - change the default values of:
    * `vaultName` from `'kv-managedapps'` to whatever you named your KV above
    * `vaultResourceGroupName` **if** you didn't use `ManagedAppsSource`
@@ -105,11 +119,6 @@ For more details see [Pull an Image from a Private Registry](https://kubernetes.
  1. Create three secrets
      * `acr-token` paste in the base64 secret you generated in the previous step
      * Set the `Content type` for `acr-token` secret to `base64`
-     * `info-message` set this to any string eg `'Hello!'`
-     * `background-color` set this to a valid HTML color name eg `'MediumSeaGreen'`
- 1. On the `Access policies` blade
-    * Set the `Enable access to Azure Resource Manager for template deployment` option
-    * Make sure to hit `Save`
  1. On the `Access control (IAM)` blade
     * Add a role assignment
     * Assign the **Contributor** role to the `Appliance Resource Provider` user at the key vault scope

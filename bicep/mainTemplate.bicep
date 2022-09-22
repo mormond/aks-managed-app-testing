@@ -11,7 +11,7 @@ param dnsPrefix string
 param vaultName string = 'kv-managedapps'
 
 @description('The resource group name of the source key vault.')
-param vaultResourceGroupName string = 'ManagedAppsSource'
+param vaultResourceGroupName string = 'managed-app-aks-publisher-source'
 
 @description('The subscription id of the source key vault.')
 param vaultSubscriptionId string = ''
