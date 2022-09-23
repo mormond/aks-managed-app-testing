@@ -20,31 +20,38 @@ For more details on service catalog managed application see:
 ## Create a package file for the managed app definition
 
 1. Build the ARM template from the Bicep files
-
     ```bash
     az bicep build --file ./bicep/mainTemplate.bicep
     ```
-
 1. Copy `mainTemplate.json` file to the `marketplace` folder
 1. Change directory into the `marketplace` folder
-1. You must make a manual edit to the `mainTemplate.json` file at this stage
+1. You must make a a couple of manual edits to the `mainTemplate.json` file at this stage
    1. Open `mainTemplate.json` in an editor such as VS Code
    1. Find the `vaultSubscriptionId` parameter (around line 46)
-   1. Set the default value to your Azure `Subscription ID`
-      * For a service catalog deployment, the app definition and deployed instance will be in the same subscription
-   1. You should end up with something like
+      1. Set the default value to your Azure `Subscription ID`
+         * For a service catalog deployment, the app definition and deployed instance will be in the same subscription
+      1. You should end up with something like
 
-      ```json
-      "vaultSubscriptionId": {
-         "type": "string",
-         "defaultValue": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-         "metadata": {
-         "description": "The subscription id of the source key vault."
-      }
-      ```
-
+         ```json
+         "vaultSubscriptionId": {
+            "type": "string",
+            "defaultValue": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "metadata": {
+            "description": "The subscription id of the source key vault."
+         }
+         ```
+   1. Find the `vaultName` parameter (around line 32)
+      1. Set the default value to the name of the Key vault you created in the [Deployment](../README.md) step
+      1. You should end up with something like
+         ```json
+         "vaultName": {
+            "type": "string",
+            "defaultValue": "xxxxxxxxx",
+            "metadata": {
+            "description": "The name of the source key vault."
+         }
+         ```   
    1. Save the changes to `mainTemplate.json`
-
 1. Zip both `mainTemplate.json` and `createUiDefinition.json` into a file named `package.zip`
 
 ## Upload package to blob storage
