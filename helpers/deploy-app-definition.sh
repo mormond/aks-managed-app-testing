@@ -46,8 +46,8 @@ az storage blob upload \
 ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 
 # Get current user objectId , SP objectId and Owner role definition ID
-USER_ID=$(az ad signed-in-user show --query objectId --output tsv)
-SP_ID=$(az ad sp list --display-name "${SP_NAME}" --query [].objectId --output tsv)
+USER_ID=$(az ad signed-in-user show --query id --output tsv)
+SP_ID=$(az ad sp list --display-name "${SP_NAME}" --query [].id --output tsv)
 OWNER_ROLE_ID=$(az role definition list --name "Owner" --query [].name --output tsv)
 STORAGE_ROLE_ID=$(az role definition list --name "Storage Blob Data Contributor" --query [].name --output tsv)
 
@@ -61,7 +61,7 @@ STORAGE_ACCOUNT_ID=$( \
 
 az role assignment create \
   --assignee "${USER_ID}" \
-  --role "${OWNER_ID}" \
+  --role "${OWNER_ROLE_ID}" \
   --scope "${STORAGE_ACCOUNT_ID}"
 
 az role assignment create \

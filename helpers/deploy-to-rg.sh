@@ -7,16 +7,26 @@ az bicep build --file ./bicep/mainTemplate.bicep
 SUB_ID=""
 RG=""
 DNS_PREFIX=""
-
-if [[ "${RG}" == "" ]]; then 
-    echo "Please supply a resource group."
-fi
+KV_NAME=""
 
 if [[ "${SUB_ID}" == "" ]]; then 
     echo "Please supply a subscription ID."
 fi
 
-if [[ $(az group exists --resource-group "${RG}") == 'false' ]]; then
+if [[ "${RG}" == "" ]]; then 
+    echo "Please supply a resource group."
+fi
+
+if [[ "${DNS_PREFIX}" == "" ]]; then 
+    echo "Please supply a DNS prefix."
+fi
+
+
+if [[ "${KV_NAME}" == "" ]]; then 
+    echo "Please supply the name of the 'source' key vault ."
+fi
+
+if [[ $(az group exists --resource-group "${RG}") == 'true' ]]; then
 
     az group create \
         --location "westeurope" \
@@ -25,7 +35,7 @@ if [[ $(az group exists --resource-group "${RG}") == 'false' ]]; then
     az deployment group create \
         --resource-group "${RG}" \
         --template-file "./bicep/mainTemplate.json" \
-        --parameters vaultSubscriptionId="${SUB_ID}" dnsPrefix="${DNS_PREFIX}"
+        --parameters vaultSubscriptionId="${SUB_ID}" dnsPrefix="${DNS_PREFIX}" vaultName="${KV_NAME}"
 else
    echo "Resource group exists"
 fi
