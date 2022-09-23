@@ -52,7 +52,7 @@ This is very similar to the steps for publishing a catalog managed application.
          }
          ```
    1. Find the `vaultName` parameter (around line 32)
-      1. Set the default value to the name of the Key vault you created in the [Deployment](../README.md) step
+      1. Set the default value to the name of the Key vault you created in the [Deployment](../docs/deploy.md) step
       1. You should end up with something like
          ```json
          "vaultName": {
