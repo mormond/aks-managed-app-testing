@@ -23,8 +23,8 @@ resource cua_resource 'Microsoft.Resources/deployments@2021-04-01' = {
     mode: 'Incremental'
     template: any({
       '$schema': 'https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#'
-      'contentVersion': '1.0.0.0'
-      'resources': []
+      contentVersion: '1.0.0.0'
+      resources: []
     })
   }
 }
@@ -51,7 +51,6 @@ resource aksCluster_resource 'Microsoft.ContainerService/managedClusters@2020-07
         count: 3
         vmSize: 'Standard_B2s'
         osType: 'Linux'
-        storageProfile: 'ManagedDisks'
         type: 'VirtualMachineScaleSets'
         mode: 'System'
       }
